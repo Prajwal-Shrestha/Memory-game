@@ -23,6 +23,7 @@
         let currentPlayer = 1;
         let player1Score = 0;
         let player2Score = 0;
+        let canClick = true;
 
         const gameContainer = document.querySelector('.game');
         const player1ScoreElement = document.getElementById('player1-score');
@@ -58,11 +59,12 @@
             box.appendChild(backFace);
 
             box.addEventListener('click', () => {
-                if (box.classList.contains('boxOpen') || box.classList.contains('boxMatch')) return;
+                if (!canClick || box.classList.contains('boxOpen') || box.classList.contains('boxMatch')) return;
                 box.classList.add('boxOpen');
 
                 const openBoxes = document.querySelectorAll('.boxOpen:not(.boxMatch)');
                 if (openBoxes.length === 2) {
+                    canClick = false; // Disable further clicks
                     setTimeout(() => {
                         if (openBoxes[0].dataset.emoji === openBoxes[1].dataset.emoji) {
                             openBoxes.forEach(openBox => {
@@ -78,7 +80,7 @@
                                 player2ScoreElement.textContent = player2Score;
                             }
 
-                            if (document.querySelectorAll('.boxMatch').length === emojis.length) {
+                            if (document.querySelectorAll('.boxMatch').length === shuffledEmojis.slice(0,20).length) {
                                 alert('Game Over! Final Scores:\nPlayer 1: ' + player1Score + '\nPlayer 2: ' + player2Score);
                             }
                         } else {
@@ -86,6 +88,7 @@
                             currentPlayer = currentPlayer === 1 ? 2 : 1;
                             updateColors();
                         }
+                        canClick = true; // Re-enable clicks after checking
                     }, 1000);
                 }
             });
